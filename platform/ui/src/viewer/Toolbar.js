@@ -32,6 +32,12 @@ function getDefaultButtonData() {
       icon: 'arrows-alt-h',
     },
     {
+      id: 'analyze',
+      title: 'Analyze',
+      className: 'imageViewerTool',
+      icon: 'analyze',
+    },
+    {
       id: 'invert',
       title: 'Invert',
       className: 'imageViewerCommand',

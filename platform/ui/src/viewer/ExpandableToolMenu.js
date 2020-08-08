@@ -108,6 +108,10 @@ class ExpandableToolMenu extends React.Component {
   };
 
   render() {
+    {
+      // eslint-disable-next-line no-console
+      console.log('this.here. ', this.props);
+    }
     const getToolBarButtonComponent = () => {
       return (
         <ToolbarButton

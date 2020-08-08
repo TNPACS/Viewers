@@ -34,6 +34,10 @@ class ToolbarSection extends PureComponent {
   };
 
   render() {
+    {
+      // eslint-disable-next-line no-console
+      console.log('tb s', this.props);
+    }
     const items = this.props.buttons.map((button, index) => {
       if (button.buttons && Array.isArray(button.buttons)) {
         return (

@@ -29,7 +29,7 @@ const mapStateToProps = (state, ownProps) => {
     dataFromStore = state.extensions.cornerstone;
   }
 
-  // If this is the active viewport, enable prefetching.
+  // If this is the active viewport, enable pre-fetching.
   const { viewportIndex } = ownProps; //.viewportData;
   const isActive = viewportIndex === state.viewports.activeViewportIndex;
   const viewportSpecificData =

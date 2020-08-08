@@ -23,6 +23,7 @@ export default {
       name: "Components",
       menu: [
         "CINE Dialog",
+        "ANALYZE Dialog",
         "Layout Button",
         "Measurement Table",
         "Overlay Trigger",

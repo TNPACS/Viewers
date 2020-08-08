@@ -117,6 +117,15 @@ const definitions = [
     },
   },
   {
+    id: 'Analyze',
+    label: 'Analyze',
+    icon: 'analyze',
+    //
+    type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
+    commandName: 'setToolActive',
+    commandOptions: { toolName: 'Analyze' },
+  },
+  {
     id: 'More',
     label: 'More',
     icon: 'ellipse-circle',

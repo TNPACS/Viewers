@@ -85,6 +85,7 @@ import trash from './icons/trash.svg';
 import unlink from './icons/unlink.svg';
 import user from './icons/user.svg';
 import youtube from './icons/youtube.svg';
+import analyze from './icons/sun.svg';
 import eye from './icons/eye.svg';
 import eyeClosed from './icons/eye-closed.svg';
 
@@ -148,6 +149,7 @@ const ICONS = {
   sun,
   palette,
   youtube,
+  analyze,
   oval,
   'ellipse-h': ellipseH,
   'ellipse-v': ellipseV,
