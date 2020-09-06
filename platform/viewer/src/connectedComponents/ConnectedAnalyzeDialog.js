@@ -49,49 +49,7 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
   } = propsFromState;
 
   return {
-    analyzeFrameRate: activeViewportCineData.analyzeFrameRate,
-    isPlaying: activeViewportCineData.isPlaying,
-    onPlayPauseChanged: isPlaying => {
-      const analyze = cloneDeep(activeViewportCineData);
-      analyze.isPlaying = !analyze.isPlaying;
 
-      propsFromDispatch.dispatchSetViewportSpecificData(activeViewportIndex, {
-        analyze,
-      });
-    },
-    onFrameRateChanged: frameRate => {
-      const analyze = cloneDeep(activeViewportCineData);
-      analyze.analyzeFrameRate = frameRate;
-
-      propsFromDispatch.dispatchSetViewportSpecificData(activeViewportIndex, {
-        analyze,
-      });
-    },
-    onClickNextButton: () => {
-      const stackData = csTools.getToolState(activeEnabledElement, 'stack');
-      if (!stackData || !stackData.data || !stackData.data.length) return;
-      const { currentImageIdIndex, imageIds } = stackData.data[0];
-      if (currentImageIdIndex >= imageIds.length - 1) return;
-      scrollToIndex(activeEnabledElement, currentImageIdIndex + 1);
-    },
-    onClickBackButton: () => {
-      const stackData = csTools.getToolState(activeEnabledElement, 'stack');
-      if (!stackData || !stackData.data || !stackData.data.length) return;
-      const { currentImageIdIndex } = stackData.data[0];
-      if (currentImageIdIndex === 0) return;
-      scrollToIndex(activeEnabledElement, currentImageIdIndex - 1);
-    },
-    onClickSkipToStart: () => {
-      const stackData = csTools.getToolState(activeEnabledElement, 'stack');
-      if (!stackData || !stackData.data || !stackData.data.length) return;
-      scrollToIndex(activeEnabledElement, 0);
-    },
-    onClickSkipToEnd: () => {
-      const stackData = csTools.getToolState(activeEnabledElement, 'stack');
-      if (!stackData || !stackData.data || !stackData.data.length) return;
-      const lastIndex = stackData.data[0].imageIds.length - 1;
-      scrollToIndex(activeEnabledElement, lastIndex);
-    },
   };
 };
 

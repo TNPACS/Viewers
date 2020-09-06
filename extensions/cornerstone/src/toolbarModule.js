@@ -25,6 +25,7 @@ const TOOLBAR_BUTTON_TYPES = {
 
 const TOOLBAR_BUTTON_BEHAVIORS = {
   CINE: 'CINE',
+  ANALYZE: 'ANALYZE',
   DOWNLOAD_SCREEN_SHOT: 'DOWNLOAD_SCREEN_SHOT',
 };
 
@@ -121,9 +122,10 @@ const definitions = [
     label: 'Analyze',
     icon: 'analyze',
     //
-    type: TOOLBAR_BUTTON_TYPES.SET_TOOL_ACTIVE,
-    commandName: 'setToolActive',
-    commandOptions: { toolName: 'Analyze' },
+    type: TOOLBAR_BUTTON_TYPES.BUILT_IN,
+    options: {
+      behavior: TOOLBAR_BUTTON_BEHAVIORS.ANALYZE,
+    },
   },
   {
     id: 'More',

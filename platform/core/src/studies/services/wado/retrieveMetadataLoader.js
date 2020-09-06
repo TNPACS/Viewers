@@ -24,7 +24,7 @@ export default class RetrieveMetadataLoader {
     const preLoadData = await this.preLoad();
     const loadData = await this.load(preLoadData);
     const postLoadData = await this.posLoad(loadData);
-
+    console.log(loadData);
     return postLoadData;
   }
 

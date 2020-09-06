@@ -10,6 +10,7 @@ import { LanguageSwitcher } from './languageSwitcher';
 
 import { Checkbox } from './checkbox';
 import { CineDialog } from './cineDialog';
+import { AnalyzeDialog } from './analyzeDialog/AnalyzeDialog';
 import { ViewportDownloadForm } from './content/viewportDownloadForm';
 import { QuickSwitch } from './quickSwitch';
 import { RoundedButtonGroup } from './roundedButtonGroup';
@@ -30,6 +31,7 @@ export {
   ContextMenu,
   Checkbox,
   CineDialog,
+  AnalyzeDialog,
   ViewportDownloadForm,
   LayoutButton,
   LayoutChooser,

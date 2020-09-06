@@ -123,6 +123,7 @@ class CineDialog extends PureComponent {
 
   render() {
     const { t } = this.props;
+    {console.log("press cine btn")}
     return (
       <div className="CineDialog">
         <div className="noselect double-row-style">

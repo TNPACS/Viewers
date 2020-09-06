@@ -15,6 +15,7 @@ import './ToolbarRow.css';
 import { commandsManager, extensionManager } from './../App.js';
 
 import ConnectedCineDialog from './ConnectedCineDialog';
+import ConnectedAnalyzeDialog from './ConnectedAnalyzeDialog';
 import ConnectedLayoutButton from './ConnectedLayoutButton';
 import { withAppContext } from '../context/AppContext';
 
@@ -141,7 +142,8 @@ class ToolbarRow extends Component {
         {
           toolbarButtons: _getVisibleToolbarButtons.call(this),
         },
-        this.closeCineDialogIfNotApplicable
+        this.closeCineDialogIfNotApplicable,
+        this.closeAnalyzeDialogIfNotApplicable
       );
     }
   }
@@ -157,6 +159,22 @@ class ToolbarRow extends Component {
         dialog.dismiss({ id: dialogId });
         activeButtons = activeButtons.filter(
           button => button.options && button.options.behavior !== 'CINE'
+        );
+        this.setState({ dialogId: null, activeButtons });
+      }
+    }
+  };
+  closeAnalyzeDialogIfNotApplicable = () => {
+    const { dialog } = this.props;
+    let { dialogId, activeButtons, toolbarButtons } = this.state;
+    if (dialogId) {
+      const analyzeButtonPresent = toolbarButtons.find(
+        button => button.options && button.options.behavior === 'ANALYZE'
+      );
+      if (!analyzeButtonPresent) {
+        dialog.dismiss({ id: dialogId });
+        activeButtons = activeButtons.filter(
+          button => button.options && button.options.behavior !== 'ANALYZE'
         );
         this.setState({ dialogId: null, activeButtons });
       }
@@ -302,6 +320,7 @@ function _handleToolbarButtonClick(button, evt, props) {
   const { activeButtons } = this.state;
 
   if (button.commandName) {
+    console.log("button", button)
     const options = Object.assign({ evt }, button.commandOptions);
     commandsManager.runCommand(button.commandName, options);
   }
@@ -310,6 +329,7 @@ function _handleToolbarButtonClick(button, evt, props) {
   // TODO: We can update this to be a `getter` on the extension to query
   //       For the active tools after we apply our updates?
   if (button.type === 'setToolActive') {
+    console.log("toggle able", button)
     const toggables = activeButtons.filter(
       ({ options }) => options && !options.togglable
     );
@@ -362,6 +382,34 @@ function _handleBuiltIn(button) {
         .getBoundingClientRect();
       const newDialogId = dialog.create({
         content: ConnectedCineDialog,
+        defaultPosition: {
+          x: x + spacing || 0,
+          y: y + spacing || 0,
+        },
+      });
+      this.setState(state => ({
+        dialogId: newDialogId,
+        activeButtons: [...state.activeButtons, button],
+      }));
+    }
+  }
+
+  if (options.behavior === 'ANALYZE') {
+    if (dialogId) {
+      dialog.dismiss({ id: dialogId });
+      this.setState(state => ({
+        dialogId: null,
+        activeButtons: [
+          ...state.activeButtons.filter(button => button.id !== id),
+        ],
+      }));
+    } else {
+      const spacing = 20;
+      const { x, y } = document
+        .querySelector(`.ViewerMain`)
+        .getBoundingClientRect();
+      const newDialogId = dialog.create({
+        content: ConnectedAnalyzeDialog,
         defaultPosition: {
           x: x + spacing || 0,
           y: y + spacing || 0,

@@ -1,13 +1,15 @@
 @import './../../design/styles/common/global.styl'
 @import './../../design/styles/common/form.styl'
 
-.CineDialog
+.btn-group{
+  padding: 10px
+}
+.AnalyzeDialog
   background: var(--ui-gray-darkest);
   color: var(--text-secondary-color);
   filter: drop-shadow(0 0 3px var(--ui-gray-darkest))
   border: none
   border-radius: 8px
-  width: inherit;
 
   h5
     font-size: 20px
@@ -17,124 +19,12 @@
   h5, label
     font-weight: 400
 
-  .analyze-navigation, .analyze-controls, .analyze-options
-    cursor: default
-
-  .fps-section
-    input[type="range"]
-      background-color: transparent
-      border: 0 none
-      outline: 0 none
-
-      &::-ms-tooltip
-        display: none
-
-  .double-row-style
-    box-sizing: border-box
-    width: 290px
-    height: 70px
-    padding: 10px
-    top: 2%
-    left: 35%
-
-    .analyze-navigation
-      position: absolute
-      right: 16px
-      top: 10px
-
-      .btn
-        padding: 0 4px
-
-        i
-          font-size: 32px
-          line-height: 32px
-
-    .analyze-controls
-      left: 0px
-
-    .analyze-options
-      padding: 0px 0
-
-      .fps-section
-        width: 175px
-        float: left
-
-      .fps
-        float: right
-
-
-  .single-row-style
-    box-sizing: content-box
-    width: 425px
-    height: 45px
-    padding: 4px 8px
-    top: 2%
-    left: 35%
-
-    .analyze-navigation
-      float: right
-      overflow: hidden
-      padding-right: 12px
-      position: relative
-
-      .btn
-        padding: 0 2px
-        margin: 0 0 0 2px
-        border: 0 none
-        &:first-of-type
-          margin-left: 0
-
-        i
-          font-size: 32px
-          line-height: 45px
-
-    .analyze-controls
-      position: relative
-      float: left
-      overflow: hidden
-
-      .btn
-        font-size: 22px
-        line-height: 45px
-        min-width: 28px
-        padding: 0 0px
-        margin: 0 4px
-        border: 0 none
-
-    .analyze-options
-      display: block
-      position: relative
-      width: 150px
-      float: left
-      overflow: hidden
-      padding: 0
-      margin: 0 0 0 10px
-
-      .fps-section
-        display: block
-        float: left
-        width: 80px
-        input[type="range"]
-          line-height: 45px
-          height: 45px
-
-      .fps
-        display: block
-        width: 68px
-        float: left
-        padding: 0
-        margin: 0 0 0 2px
-        text-align: center
-        line-height: 45px
-        font-size: 14px;
-        line-height: 1.42857143;
-
   .btn
     color: var(--text-secondary-color);
     background-color: transparent
     border: 0
     border-radius: 4px
-    font-size: 15px
+    font-size: 19px
     width: 45px
     font-weight: normal
     height: 37px
@@ -170,3 +60,49 @@
 
     &.active
       box-shadow: inset 1px 1px 2px var(--ui-gray-darkest)
+
+  /* Dropdown Button */
+.dropbtn {
+  background-color: #3498DB;
+  color: white;
+  padding: 12px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  padding: 10px
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: block;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}

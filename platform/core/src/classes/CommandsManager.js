@@ -24,7 +24,7 @@ export class CommandsManager {
 
     if (!getAppState || !getActiveContexts) {
       log.warn(
-        'CommandsManager was instantiated without getAppState() or getActiveContexts()'
+        'CommandsManager was instantiated without getAppState() or getActiveContexts()',
       );
     }
 
@@ -179,7 +179,6 @@ export class CommandsManager {
 
     if (typeof commandFn !== 'function') {
       log.warn(`No commandFn was defined for command "${commandName}"`);
-      return;
     } else {
       return commandFn(commandParams);
     }
