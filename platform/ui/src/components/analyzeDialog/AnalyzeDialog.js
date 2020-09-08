@@ -3,17 +3,26 @@ import './AnalyzeDialog.styl';
 import React, { PureComponent } from 'react';
 import { withTranslation } from '../../contextProviders';
 import { Icon } from './../../elements/Icon';
-
-// import PropTypes from 'prop-types';
+import { listPipelines } from './caller';
 
 class AnalyzeDialog extends PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: true,
       showDropdown: false,
-      modelName: 'Select model ...'
+      models: [],
+      modelName: 'Select model ...',
     };
+  }
+
+  componentDidMount() {
+    console.log('xxxxxxxxxxxxxxx', window.config.aiserver.url);
+    listPipelines(res => {
+      console.log(res);
+      this.setState({ models: res.data, loading: false });
+    });
   }
 
   static propTypes = {};
@@ -21,30 +30,44 @@ class AnalyzeDialog extends PureComponent {
   static defaultProps = {};
 
   toggleDropdown = () => {
-    console.log("show dropdown ")
-    this.setState({showDropdown: !this.state.showDropdown})
-  }
-  selectModel = (name) => {
-    this.setState({showDropdown: false, modelName: name || this.state.modelName})
-  }
+    console.log('show dropdown ');
+    this.setState({ showDropdown: !this.state.showDropdown });
+  };
+  selectModel = name => {
+    this.setState({
+      showDropdown: false,
+      modelName: name || this.state.modelName,
+    });
+  };
 
   render() {
     {
       // eslint-disable-next-line no-console
       console.log('press analyze');
     }
-    const {showDropdown,modelName } = this.state;
+    const { showDropdown, modelName, models } = this.state;
     return (
       <div className="AnalyzeDialog">
         <div className="noselect double-row-style">
           <div className="analyze-controls">
             <div className="btn-group">
-              <button className="dropbtn" onClick={() => this.toggleDropdown()}>{modelName}</button>
+              <button className="dropbtn" onClick={() => this.toggleDropdown()}>
+                {modelName}
+              </button>
 
-              {showDropdown && <div id="myDropdown" className="dropdown-content">
-                <a href="#" onClick={() => this.selectModel('Model 1')}>Model 1</a>
-                <a href="#" onClick={() => this.selectModel('Model 2')}>Model 2</a>
-              </div>}
+              {showDropdown && (
+                <div id="myDropdown" className="dropdown-content">
+                  {models.map((k, i) => (
+                    <a
+                      key={i}
+                      href="#"
+                      onClick={() => this.selectModel(k.name)}
+                    >
+                      {k.name}
+                    </a>
+                  ))}
+                </div>
+              )}
 
               <button
                 title={'Analyze this study'}
@@ -52,7 +75,7 @@ class AnalyzeDialog extends PureComponent {
                 data-toggle="tooltip"
                 // onClick={this.onClickSkipToStart}
               >
-                <Icon name="analyze"/>
+                <Icon name="analyze" />
               </button>
             </div>
           </div>

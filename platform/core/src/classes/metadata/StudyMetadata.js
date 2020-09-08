@@ -620,6 +620,7 @@ export class StudyMetadata extends Metadata {
       const displaySet = this.findDisplaySet(
         displaySet => displaySet.displaySetInstanceUID === displaySetInstanceUID
       );
+      console.log("sssssssss", displaySet.images[0].getImageId())
       return displaySet.images[0].getImageId();
     } catch (error) {
       console.error('Failed to retrieve image metadata');

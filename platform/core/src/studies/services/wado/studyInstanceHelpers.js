@@ -95,7 +95,6 @@ async function makeSOPInstance(server, study, instance) {
   const naturalizedInstance = await metadataProvider.addInstance(instance, {
     server,
   });
-
   const {
     StudyInstanceUID,
     SeriesInstanceUID,
@@ -148,6 +147,7 @@ async function makeSOPInstance(server, study, instance) {
   };
 
   series.instances.push(sopInstance);
+  // console.log("hereeeeeee", sopInstance)
 
   if (
     sopInstance.thumbnailRendering === 'wadors' ||

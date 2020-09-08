@@ -4,7 +4,7 @@ export default function(element) {
   // Get the Cornerstone imageId
   const enabledElement = cornerstone.getEnabledElement(element);
   const imageId = enabledElement.image.imageId;
-
+  console.log("xasfsd", imageId)
   // Get StudyInstanceUID & PatientID
   const {
     StudyInstanceUID,

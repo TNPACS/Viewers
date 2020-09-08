@@ -4,6 +4,9 @@ window.config = {
   extensions: [],
   showStudyList: true,
   filterQueryParam: false,
+  aiserver: {
+    url: 'http://192.168.0.107:3000',
+  },
   servers: {
     dicomWeb: [
       // {

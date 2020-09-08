@@ -8,6 +8,7 @@ export default function(imagePath, thumbnail = false) {
     frameIndex,
   ] = imagePath.split('_');
   const studyMetadata = studyMetadataManager.get(StudyInstanceUID);
+  console.log('xxasdfadf');
   const series = studyMetadata.getSeriesByUID(SeriesInstanceUID);
   const instance = series.getInstanceByUID(SOPInstanceUID);
   return instance.getImageId(frameIndex, thumbnail);

@@ -77,7 +77,7 @@ const SegmentationPanel = ({
     labelmapList: [],
     segmentList: [],
     cachedSegmentsProperties: [],
-    isLoading: false
+    isLoading: false,
   });
 
   useEffect(() => {
