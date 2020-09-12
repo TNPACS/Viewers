@@ -60,6 +60,12 @@ class MetadataProvider {
 
     await this._checkBulkDataAndInlineBinaries(instance, options.server);
 
+    // console.log("study instan uid", StudyInstanceUID)
+    // console.log("series instan uid", SeriesInstanceUID)
+    // console.log("snaturalized dataset", naturalizedDataset)
+    // console.log("dicom dataset", dicomJSONDatasetOrP10ArrayBuffer)
+    // console.log("study dataset", study)
+    // console.log("getinstance ", this._getInstance("1.3.6.1.4.1.14519.5.2.1.8421.4008.266800390798401875615081856127"))
     return instance;
   }
 
@@ -76,6 +82,7 @@ class MetadataProvider {
 
     let study = studies.get(StudyInstanceUID);
 
+    // console.log("studies", studies)
     if (!study) {
       study = { series: new Map() };
       studies.set(StudyInstanceUID, study);
@@ -96,7 +103,7 @@ class MetadataProvider {
 
   _getAndCacheInstanceFromStudy(series, SOPInstanceUID) {
     let instance = series.instances.get(SOPInstanceUID);
-
+    // console.log("series", series)
     if (!instance) {
       instance = {};
       series.instances.set(SOPInstanceUID, instance);
@@ -121,7 +128,7 @@ class MetadataProvider {
     }
 
     const { StudyInstanceUID, SeriesInstanceUID, SOPInstanceUID } = uids;
-
+    // console.log("image id", imageId)
     return this._getInstanceData(
       StudyInstanceUID,
       SeriesInstanceUID,

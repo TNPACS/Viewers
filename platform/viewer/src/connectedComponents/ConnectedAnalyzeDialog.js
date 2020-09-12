@@ -6,6 +6,7 @@ import { commandsManager } from './../App.js';
 // Our target output kills the `as` and "import" throws a keyword error
 // import { import as toolImport, getToolState } from 'cornerstone-tools';
 import cloneDeep from 'lodash.clonedeep';
+import { utils } from '@ohif/core';
 
 const toolImport = csTools.import;
 const scrollToIndex = toolImport('util/scrollToIndex');
@@ -25,11 +26,35 @@ const mapStateToProps = state => {
     analyzeFrameRate: 24,
   };
 
+  const { studyMetadataManager } = utils;
+  const studies = studyMetadataManager.all();
+
+  // viewportSpecificData and activeViewportIndex are exposed in redux under `viewports`
+  const {
+    displaySetInstanceUID,
+    StudyInstanceUID,
+    SeriesInstanceUID,
+  } = viewportSpecificData[activeViewportIndex];
+
+  const study = studies.find(
+    study => study.studyInstanceUID === StudyInstanceUID
+  );
+
+  // console.log('study', study);
+  // console.log('studssy', studies);
+  console.log("study connect analyze dialog", study)
+
+  const series = study._series.find(
+    e => e.seriesInstanceUID === SeriesInstanceUID
+  );
+
   // New props we're creating?
   return {
     activeEnabledElement: dom,
     activeViewportCineData: analyzeData,
     activeViewportIndex: state.viewports.activeViewportIndex,
+    StudyInstanceUID,
+    series,
   };
 };
 
@@ -46,10 +71,13 @@ const mergeProps = (propsFromState, propsFromDispatch, ownProps) => {
     activeEnabledElement,
     activeViewportCineData,
     activeViewportIndex,
+    StudyInstanceUID,
+    series,
   } = propsFromState;
 
   return {
-
+    StudyInstanceUID,
+    series,
   };
 };
 
