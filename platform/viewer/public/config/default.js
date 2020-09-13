@@ -5,7 +5,7 @@ window.config = {
   showStudyList: true,
   filterQueryParam: false,
   aiserver: {
-    url: 'http://192.168.0.107:4000',
+    url: 'https://aiserver.clara.huytc.dev',
   },
   servers: {
     dicomWeb: [

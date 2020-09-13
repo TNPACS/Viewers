@@ -65,7 +65,6 @@ export const startAnalyze = (jobID, callback) => {
 
 export const pollingJobStatus = (jobID, callback) => {
   const url = window.config.aiserver.url;
-  // const url = 'http://192.168.0.107:4000';
   const req = {
     method: 'get',
     url: `${url}/jobs/${jobID}`,
@@ -79,7 +78,6 @@ export const pollingJobStatus = (jobID, callback) => {
       // dive into the ajax promise
       ajax.then(function(response) {
         // If the condition is met, we're done!
-        console.log('response', response);
         if (response.data && response.data.status === 'completed') {
           resolve(response);
         }
