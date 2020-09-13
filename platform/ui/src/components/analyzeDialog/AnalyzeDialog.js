@@ -3,7 +3,23 @@ import './AnalyzeDialog.styl';
 import React, { PureComponent } from 'react';
 import { withTranslation } from '../../contextProviders';
 import { Icon } from './../../elements/Icon';
-import { createJob, listPipelines, sendImg, startAnalyze } from './caller';
+import {
+  createJob,
+  listPipelines,
+  pollingJobStatus,
+  sendImg,
+  startAnalyze,
+  checkJobStatus,
+} from './caller';
+
+const status = {
+  ANALYZING: 'Analyzing ...',
+  CREATING_JOB: 'Creating a new job ...',
+  LOADING_IMAGES: 'Images are loading, please try again later ...',
+  SENDING_IMAGES: 'Images are sending ...',
+  JOB_DONE: 'Job done.',
+  LOADING_MODELS: 'Loading models ...',
+};
 
 class AnalyzeDialog extends PureComponent {
   constructor(props) {
@@ -14,14 +30,21 @@ class AnalyzeDialog extends PureComponent {
       showDropdown: false,
       models: [],
       modelName: 'Select model ...',
+      analyzePending: true,
+      statusMessage: '',
     };
   }
 
   componentDidMount() {
-    console.log('xxxxxxxxxxxxxxx', window.config.aiserver.url);
+    this.setState({ statusMessage: status.LOADING_MODELS });
     listPipelines(res => {
       console.log(res);
-      this.setState({ models: res.data, loading: false });
+      this.setState({
+        models: res.data,
+        loading: false,
+        analyzePending: false,
+        statusMessage: '',
+      });
     });
   }
 
@@ -30,12 +53,10 @@ class AnalyzeDialog extends PureComponent {
   static defaultProps = {};
 
   toggleDropdown = () => {
-    console.log('show dropdown ');
     this.setState({ showDropdown: !this.state.showDropdown });
   };
 
   selectModel = (name, id) => {
-    console.log('name id', id);
     this.setState({
       showDropdown: false,
       modelName: name || this.state.modelName,
@@ -44,19 +65,19 @@ class AnalyzeDialog extends PureComponent {
   };
 
   sendSeries = () => {
-    const { series } = this.props;
-    if (this.state.pipeline_id === undefined) {
+    const url = window.config.aiserver.url;
+    this.setState({ analyzePending: true });
+    const { series, StudyInstanceUID } = this.props;
+    const { pipeline_id } = this.state;
+    if (pipeline_id === undefined) {
       alert('Please select model first!');
       return;
     }
-    // console.log('studyyy her', this.props.study);
-    // console.log('studyyy her', this.props.SeriesInstanceUID);
-    // console.log('studyyy her', this.props.activeViewportIndex);
     console.log('series component', series);
     let bodyFormData = new FormData();
-    bodyFormData.append('studyInstanceUid', this.props.StudyInstanceUID);
+    bodyFormData.append('studyInstanceUid', StudyInstanceUID);
     bodyFormData.append('seriesInstanceUid', series._data.SeriesInstanceUID);
-    bodyFormData.append('pipelineId', this.state.pipeline_id);
+    bodyFormData.append('pipelineId', pipeline_id);
     const sopInstanceUids = series._instances.map(
       (k, i) => k._data.metadata.SOPInstanceUID
     );
@@ -65,49 +86,112 @@ class AnalyzeDialog extends PureComponent {
       bodyFormData.append('sopInstanceUids', k)
     );
 
-    const imageInstances = series._data.instances.map((k, i) => ({
-      wadouri: k.wadouri,
-      sopInstanceUid: k.metadata.SOPInstanceUID,
-      byteArray: cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.get(
+    const imageInstances = series._data.instances.map((k, i) => {
+      const imgDataCache = cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.get(
         k.wadouri
-      ).byteArray,
-    }));
+      );
+      if (imgDataCache === undefined) {
+        return undefined;
+      } else {
+        return {
+          wadouri: k.wadouri,
+          sopInstanceUid: k.metadata.SOPInstanceUID,
+          byteArray: imgDataCache.byteArray,
+        };
+      }
+    });
+    if (imageInstances.includes(undefined)) {
+      console.log(status.LOADING_IMAGES);
+      this.setState({
+        statusMessage: status.LOADING_IMAGES,
+        analyzePending: false,
+      });
+      return;
+    }
+    this.setState({ statusMessage: status.CREATING_JOB });
     console.log('image', imageInstances);
     // console.log('req', bodyFormData.getAll());
     createJob(bodyFormData, res => {
-      console.log(res);
+      console.log('create job res', res);
       if (res.data._id) {
         const jobID = res.data._id;
         let promisesReqs = [];
 
-        imageInstances.forEach((img, i) => {
-          let reqSendImg = new FormData();
+        // check whether the job received is already running
+        // if not, start a brand new job
+        checkJobStatus(jobID, res => {
+          if (res.data.status === 'completed') {
+            this.setState({
+              statusMessage: status.JOB_DONE,
+              analyzePending: false,
+            });
+            console.log("job done ", res);
+            res.data.outputs.forEach((k, i) => {
+              window.open(`${url}/jobs/${jobID}/outputs/${k}`, '_blank');
+            });
+          } else if (res.data.status === 'in_progress') {
+            pollingJobStatus(jobID, r => {
+              console.log('polling stt res');
+              this.setState({
+                statusMessage: status.ANALYZING,
+                analyzePending: false,
+              });
+            });
+          } else if (
+            res.data.status === 'pending' ||
+            res.data.status === 'failed'
+          ) {
+            this.setState({ statusMessage: status.SENDING_IMAGES });
+            // build information obj for each img in series
+            imageInstances.forEach((img, i) => {
+              let reqSendImg = new FormData();
+              reqSendImg.append(
+                img.sopInstanceUid,
+                new Blob([
+                  new Uint8Array(img.byteArray, 0, img.byteArray.length),
+                ]),
+                {
+                  filename: `${img.sopInstanceUid}.dcm`,
+                  contentType: 'image/dcm',
+                  knownLength: img.byteArray.length,
+                }
+              );
 
-          reqSendImg.append(
-            img.sopInstanceUid,
-            new Blob([new Uint8Array(img.byteArray, 0, img.byteArray.length)]),
-            {
-              filename: `${img.sopInstanceUid}.dcm`,
-              contentType: 'image/dcm',
-              knownLength: img.byteArray.length,
-            }
-          );
+              promisesReqs.push(sendImg(jobID, reqSendImg));
+            });
 
-          promisesReqs.push(sendImg(jobID, reqSendImg));
-        });
-
-        Promise.all(promisesReqs).then(() => {
-          console.log('sent all OK');
-          startAnalyze(jobID, response => {
-            console.log('response', response);
-          });
+            // send all images in series to server
+            Promise.all(promisesReqs).then(() => {
+              this.setState({ statusMessage: status.ANALYZING });
+              console.log('All images in series have been uploaded OK');
+              startAnalyze(jobID, response => {
+                console.log('start job response');
+                pollingJobStatus(jobID, r => {
+                  this.setState({
+                    statusMessage: status.JOB_DONE,
+                    analyzePending: false,
+                  });
+                  console.log("job done ", r);
+                  r.data.outputs.forEach((k, i) => {
+                    window.open(`${url}/jobs/${jobID}/outputs/${k}`, '_blank');
+                  });
+                });
+              });
+            });
+          }
         });
       }
     });
   };
 
   render() {
-    const { showDropdown, modelName, models } = this.state;
+    const {
+      showDropdown,
+      modelName,
+      models,
+      analyzePending,
+      statusMessage,
+    } = this.state;
     return (
       <div className="AnalyzeDialog">
         <div className="noselect double-row-style">
@@ -137,6 +221,7 @@ class AnalyzeDialog extends PureComponent {
                 title={'Analyze this study'}
                 className="btn"
                 data-toggle="tooltip"
+                disabled={analyzePending}
                 onClick={() => this.sendSeries()}
               >
                 <Icon name="analyze" />
@@ -144,6 +229,11 @@ class AnalyzeDialog extends PureComponent {
             </div>
           </div>
         </div>
+        <br />
+        <div className="ModalStatus" style={{ margin: 10 }}>
+          {statusMessage}
+        </div>
+        <br />
       </div>
     );
   }

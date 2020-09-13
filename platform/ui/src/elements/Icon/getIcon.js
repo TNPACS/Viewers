@@ -86,7 +86,7 @@ import unlink from './icons/unlink.svg';
 import user from './icons/user.svg';
 import youtube from './icons/youtube.svg';
 import analyze from './icons/sun.svg';
-import loading from './icons/loading.svg';
+// import loading from './icons/loading.svg';
 import eye from './icons/eye.svg';
 import eyeClosed from './icons/eye-closed.svg';
 
@@ -151,7 +151,6 @@ const ICONS = {
   palette,
   youtube,
   analyze,
-  loading,
   oval,
   'ellipse-h': ellipseH,
   'ellipse-v': ellipseV,
